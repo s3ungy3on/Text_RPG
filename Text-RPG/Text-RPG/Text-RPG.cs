@@ -35,6 +35,9 @@ namespace Text_RPG
                     case 3:
                         Adventure.RandomAdventure();
                         break;
+                    case 4:
+                        Adventure.TownPatrol();
+                        break;
 
                 }
             }
@@ -446,7 +449,8 @@ namespace Text_RPG
         public static void RandomAdventure()
         {
             Console.Clear();
-            Console.WriteLine("스태미나 10을 사용해 모험을 진행하시겠습니까?");
+            Console.WriteLine("랜덤 모험을 진행하시겠습니까?");
+            Console.WriteLine("스태미나 10이 소비됩니다.");
             Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.Write("1. ");
@@ -484,38 +488,42 @@ namespace Text_RPG
 
         private static void RandomAdventurePlay()
         {
-            Random Adventure = new Random();
-            int num = Adventure.Next(1, 101);
+            Random rand = new Random();
+            int randnum = rand.Next(1, 101);
 
-            if (Character._player.Stamina >= 10 && num >= 50)
+            if (Character._player.Stamina >= 10)
             {
-                Console.WriteLine(".");
-                Thread.Sleep(500);
-                Console.WriteLine(".");
-                Thread.Sleep(500);
-                Console.WriteLine(".");
-                Thread.Sleep(500);
-                Console.WriteLine("몬스터 조우! 골드 500 획득");
-                Character._player.Gold += 500;
-                Character._player.Stamina -= 10;
-                Thread.Sleep(1000);
-                Text_RPG.GameStartMenu();
+                if(randnum >= 50)
+                {
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine("몬스터 조우! 골드 500 획득");
+                    Character._player.Gold += 500;
+                    Character._player.Stamina -= 10;
+                    Thread.Sleep(1000);
+                    Text_RPG.GameStartMenu();
+                }
+                else if(randnum <= 51)
+                {
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine();
+                    Console.WriteLine("아무 일도 일어나지 않았다.");
+                    Character._player.Stamina -= 10;
+                    Thread.Sleep(1000);
+                    Text_RPG.GameStartMenu();
+                }
+
             }
-            else if (Character._player.Stamina >= 10 && num <= 51)
-            {
-                Console.WriteLine(".");
-                Thread.Sleep(500);
-                Console.WriteLine(".");
-                Thread.Sleep(500);
-                Console.WriteLine(".");
-                Thread.Sleep(500);
-                Console.WriteLine();
-                Console.WriteLine("아무 일도 일어나지 않았다.");
-                Character._player.Stamina -= 10;
-                Thread.Sleep(1000);
-                Text_RPG.GameStartMenu();
-            }
-            else if (Character._player.Stamina <= 9)
+            else if (Character._player.Stamina < 10)
             {
                 Console.WriteLine();
                 Console.WriteLine("스태미나가 부족합니다.");
@@ -526,7 +534,135 @@ namespace Text_RPG
 
         public static void TownPatrol()
         {
+            Console.Clear();
+            Console.WriteLine("마을 순찰을 진행하시겠습니까?");
+            Console.WriteLine("스태미나 5가 소비됩니다.");
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write("1. ");
+            Console.ResetColor();
+            Console.WriteLine("진행한다");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write("0. ");
+            Console.ResetColor();
+            Console.WriteLine("돌아간다");
+            Console.WriteLine();
+            Console.WriteLine("원하시는 행동을 입력해주세요.");
+            Console.Write(">> ");
 
+            int seletInput = int.Parse(Console.ReadLine());
+
+            while (true)
+            {
+                if (seletInput == 0)
+                {
+                    Text_RPG.GameStartMenu();
+                }
+                else if (seletInput == 1)
+                {
+                    TownPatrolPlay();
+                }
+                else
+                {
+                    Console.WriteLine("잘못된 입력입니다.");
+                    Console.Write(">> ");
+                }
+            }
+        }
+
+        private static void TownPatrolPlay()
+        {
+            Random rand = new Random();
+            int randnum = rand.Next(1, 101);
+
+            if (Character._player.Stamina >= 5)
+            {
+                if(randnum <= 10)
+                {
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine();
+                    Console.WriteLine("마을 아이들이 모여있다. 간식을 사줘볼까?");
+                    Console.WriteLine("500G를 소비하였습니다.");
+                    Character._player.Gold -= 500;
+                    Character._player.Stamina -= 5;
+                    Thread.Sleep(1000);
+                    Text_RPG.GameStartMenu();
+                }
+                else if(randnum <= 20)
+                {
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine();
+                    Console.WriteLine("촌장님을 만나서 심부름을 했다.");
+                    Console.WriteLine("2000G를 획득하였습니다.");
+                    Character._player.Gold += 2000;
+                    Character._player.Stamina -= 5;
+                    Thread.Sleep(1000);
+                    Text_RPG.GameStartMenu();
+                }
+                else if(randnum <= 40)
+                {
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine();
+                    Console.WriteLine("길 잃은 사람을 안내해주었다.");
+                    Console.WriteLine("1000G를 획득하였습니다.");
+                    Character._player.Gold += 1000;
+                    Character._player.Stamina -= 5;
+                    Thread.Sleep(1000);
+                    Text_RPG.GameStartMenu();
+                }
+                else if(randnum <= 70)
+                {
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine();
+                    Console.WriteLine("마을 주민과 인사를 나눴다. 선물을 받았다.");
+                    Console.WriteLine("500G를 획득하였습니다.");
+                    Character._player.Gold += 500;
+                    Character._player.Stamina -= 5;
+                    Thread.Sleep(1000);
+                    Text_RPG.GameStartMenu();
+                }
+                else if(randnum <= 100)
+                {
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine();
+                    Console.WriteLine("아무 일도 일어나지 않았다.");
+                    Character._player.Stamina -= 5;
+                    Thread.Sleep(1000);
+                    Text_RPG.GameStartMenu();
+                }
+            }
+            else if (Character._player.Stamina < 5)
+            {
+                Console.WriteLine();
+                Console.WriteLine("스태미나가 부족합니다.");
+                Thread.Sleep(1000);
+                Text_RPG.GameStartMenu();
+            }
         }
     }
 }
