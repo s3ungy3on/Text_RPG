@@ -1,13 +1,13 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 
 namespace Text_RPG
 {
 
     internal class Text_RPG
     {
-        public static Character _player;
-
         static void Main()
         {
             //Items itemsData = new Items();
@@ -27,10 +27,13 @@ namespace Text_RPG
                 switch (selectInput)
                 {
                     case 1:
-                        _player.StatusDisplay();
+                        Character._player.StatusDisplay();
                         break;
                     case 2:
                         Inventory.InventoryDisplay();
+                        break;
+                    case 3:
+                        Adventure.RandomAdventure();
                         break;
 
                 }
@@ -39,7 +42,7 @@ namespace Text_RPG
 
         static void DataSetting()
         {
-            _player = new Character("승연", 1, "학생", 10, 5, 100, 1000);
+            Character._player = new Character("승연", 1, "학생", 10, 5, 100, 1000);
             //Console.WriteLine("게임을 시작하기 전, 당신의 이름을 말해주세요.");
             //Console.Write(">> ");
             //string nameinput = Console.ReadLine();
@@ -78,7 +81,7 @@ namespace Text_RPG
         }
     }
 
-    static class Text
+    public class Text
     {
         public static void MainScene()
         {
@@ -144,6 +147,7 @@ namespace Text_RPG
 
     public class Character
     {
+        public static Character _player;
         public string Name { get; }
         public int Level { get; }
         public string Job { get; }
@@ -151,11 +155,13 @@ namespace Text_RPG
         public int Defense { get; }
         public int Hp { get; set; }
         public int Gold { get; set; }
+        public int Exp { get; set; }
+        public int Stamina {  get; set; }
 
         private int itemAttack = 0;
         private int itemDefense = 0;
 
-        public Character(string name, int level, string job, int attack, int defese, int hp, int gold)
+        public Character(string name, int level, string job, int attack, int defese, int hp, int gold, int exp = 0, int stamina = 20)
         {
             Name = name;
             Job = job;
@@ -164,6 +170,8 @@ namespace Text_RPG
             Defense = defese;
             Hp = hp;
             Gold = gold;
+            Exp = exp;
+            Stamina = stamina;
         }
 
         private int CurrentAttack
@@ -217,7 +225,11 @@ namespace Text_RPG
             Console.Write("LV. ");
             Console.ResetColor();
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
-            Console.WriteLine($"{Level}");
+            Console.Write($"{Level}");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write($"\tExp");
+            Console.ResetColor();
+            Console.WriteLine($" {Exp}");
             Console.ResetColor();
             Console.WriteLine($"{Name} ( {Job} )");
             Console.Write("공격력 : ");
@@ -231,6 +243,10 @@ namespace Text_RPG
             Console.Write("체 력 : ");
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine($"{Hp}");
+            Console.ResetColor();
+            Console.Write("스태미나 : ");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine($"{Stamina}");
             Console.ResetColor();
             Console.Write("Gold : ");
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
@@ -360,10 +376,11 @@ namespace Text_RPG
                 {
                     ItemEquipped();
                 }
-
-
-                Console.WriteLine("잘못된 입력입니다.");
-                Console.Write(">> ");
+                else
+                {
+                    Console.WriteLine("잘못된 입력입니다.");
+                    Console.Write(">> ");
+                }
             }
         }
 
@@ -419,6 +436,97 @@ namespace Text_RPG
                     Console.Write(">> ");
                 }
             }
+        }
+    }
+
+    public class Adventure
+    {
+        Character player = Character._player;
+
+        public static void RandomAdventure()
+        {
+            Console.Clear();
+            Console.WriteLine("스태미나 10을 사용해 모험을 진행하시겠습니까?");
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write("1. ");
+            Console.ResetColor();
+            Console.WriteLine("진행한다");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write("0. ");
+            Console.ResetColor();
+            Console.WriteLine("돌아간다");
+            Console.WriteLine();
+            Console.WriteLine("원하시는 행동을 입력해주세요.");
+            Console.Write(">> ");
+
+            int seletInput = int.Parse(Console.ReadLine());
+
+            while (true)
+            {
+                if (seletInput == 0)
+                {
+                    Text_RPG.GameStartMenu();
+                }
+                else if (seletInput == 1)
+                {
+                    RandomAdventurePlay();
+                }
+                else
+                {
+                    Console.WriteLine("잘못된 입력입니다.");
+                    Console.Write(">> ");
+                }
+            }
+
+
+        }
+
+        private static void RandomAdventurePlay()
+        {
+            Random Adventure = new Random();
+            int num = Adventure.Next(1, 101);
+
+            if (Character._player.Stamina >= 10 && num >= 50)
+            {
+                Console.WriteLine(".");
+                Thread.Sleep(500);
+                Console.WriteLine(".");
+                Thread.Sleep(500);
+                Console.WriteLine(".");
+                Thread.Sleep(500);
+                Console.WriteLine("몬스터 조우! 골드 500 획득");
+                Character._player.Gold += 500;
+                Character._player.Stamina -= 10;
+                Thread.Sleep(1000);
+                Text_RPG.GameStartMenu();
+            }
+            else if (Character._player.Stamina >= 10 && num <= 51)
+            {
+                Console.WriteLine(".");
+                Thread.Sleep(500);
+                Console.WriteLine(".");
+                Thread.Sleep(500);
+                Console.WriteLine(".");
+                Thread.Sleep(500);
+                Console.WriteLine();
+                Console.WriteLine("아무 일도 일어나지 않았다.");
+                Character._player.Stamina -= 10;
+                Thread.Sleep(1000);
+                Text_RPG.GameStartMenu();
+            }
+            else if (Character._player.Stamina <= 9)
+            {
+                Console.WriteLine();
+                Console.WriteLine("스태미나가 부족합니다.");
+                Thread.Sleep(1000);
+                Text_RPG.GameStartMenu();
+            }
+        }
+
+        public static void TownPatrol()
+        {
+
         }
     }
 }
