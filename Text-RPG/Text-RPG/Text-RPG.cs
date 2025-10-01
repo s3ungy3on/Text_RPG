@@ -10,7 +10,6 @@ namespace Text_RPG
     {
         static void Main()
         {
-            //Items itemsData = new Items();
             DataSetting();
             GameStartMenu();
         }
@@ -40,6 +39,14 @@ namespace Text_RPG
                         break;
                     case 5:
                         Adventure.Training();
+                        break;
+                    case 6:
+                        Store.StoreDisplay();
+                        break;
+                    case 7:
+                        break;
+                    case 8:
+                        Adventure.Relax();
                         break;
 
                 }
@@ -410,7 +417,10 @@ namespace Text_RPG
             }
 
             Console.WriteLine();
-            Console.WriteLine("0. 나가기");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write("0. ");
+            Console.ResetColor();
+            Console.WriteLine("나가기");
             Console.WriteLine();
             Console.Write("원하시는 행동을 입력해주세요.\n>> ");
 
@@ -749,5 +759,258 @@ namespace Text_RPG
                 Text_RPG.GameStartMenu();
             }
         }
+
+        public static void Relax()
+        {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("휴식하기");
+            Console.ResetColor();
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write("500");
+            Console.ResetColor();
+            Console.Write($" G를 내면 체력을 회복할 수 있습니다. (보유 골드 : ");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write($"{Character._player.Gold}");
+            Console.ResetColor();
+            Console.WriteLine(" G)");
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write("1. ");
+            Console.ResetColor();
+            Console.WriteLine("휴식하기");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write("0. ");
+            Console.ResetColor();
+            Console.WriteLine("나가기");
+            Console.WriteLine();
+            Console.Write("원하시는 행동을 입력해주세요.\n>> ");
+
+            int seletInput = int.Parse(Console.ReadLine());
+
+            while (true)
+            {
+                if (seletInput == 0)
+                {
+                    Text_RPG.GameStartMenu();
+                }
+                else if (seletInput == 1)
+                {
+                    RelaxPlay();
+                }
+                else
+                {
+                    Console.Write("잘못된 입력입니다.\n>> ");
+                }
+            }
+        }
+
+        private static void RelaxPlay()
+        {
+            if(Character._player.Gold >= 500)
+            {
+                Console.WriteLine(".");
+                Thread.Sleep(500);
+                Console.WriteLine(".");
+                Thread.Sleep(500);
+                Console.WriteLine(".");
+                Thread.Sleep(500);
+                Console.WriteLine();
+                Console.WriteLine("휴식을 완료했습니다.\n체력과 스태미나가 최대치로 회복되었습니다.");
+                Character._player.Stamina = 20;
+                Character._player.Hp = 100;
+                Character._player.Gold -= 500;
+                Thread.Sleep(1000);
+                Text_RPG.GameStartMenu();
+            }
+            else
+            {
+                Console.WriteLine();
+                Console.WriteLine("Gold 가 부족합니다.");
+                Thread.Sleep(1000);
+                Text_RPG.GameStartMenu();
+            }
+        }
+    }
+
+    public class Store
+    {
+        public static void StoreDisplay()
+        {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("상점");
+            Console.ResetColor();
+            Console.WriteLine("필요한 아이템을 얻을 수 있는 상점입니다.\n\n[보유 골드]");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write($"{Character._player.Gold}");
+            Console.ResetColor();
+            Console.WriteLine(" G\n");
+            Console.WriteLine("[아이템 목록]");
+
+            for (int i = 0; i < Items._items.Length; i++)
+            {
+                Items item = Items._items[i];
+
+                string statsType = (item.Type == ItemType.Armor) ? "방어력" : "공격력";
+                int statValue = (item.Type == ItemType.Armor) ? item.Defense : item.Attack;
+                Console.Write($"- ");
+                Text.Equipped_E_Text(item.IsEquipped);
+                Console.WriteLine($"{item.Name.PadRight(10, ' ')}\t| {statsType} +{statValue}\t| {item.Desc}");
+            }
+
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write("1. ");
+            Console.ResetColor();
+            Console.WriteLine("아이템 구매");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write("2. ");
+            Console.ResetColor();
+            Console.WriteLine("아이템 판매");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write("0. ");
+            Console.ResetColor();
+            Console.WriteLine("나가기");
+            Console.WriteLine();
+            Console.Write("원하시는 행동을 입력해주세요.\n>> ");
+
+            while (true)
+            {
+                int selectInput = int.Parse(Console.ReadLine());
+
+                if (selectInput == 0)
+                {
+                    Text_RPG.GameStartMenu();
+                }
+                else if (selectInput == 1)
+                {
+                    StoreBuy();
+                }
+                else if(selectInput == 2)
+                {
+                    StoreSell();
+                }
+                else
+                {
+                    Console.Write("잘못된 입력입니다.\n>> ");
+                }
+            }
+        }
+
+        private static void StoreBuy()
+        {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("상점 - 아이템 구매");
+            Console.ResetColor();
+            Console.WriteLine("필요한 아이템을 얻을 수 있는 상점입니다.\n\n[보유 골드]");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write($"{Character._player.Gold}");
+            Console.ResetColor();
+            Console.WriteLine(" G\n");
+            Console.WriteLine("[아이템 목록]");
+
+            for (int i = 0; i < Items._items.Length; i++)
+            {
+                Items item = Items._items[i];
+
+                string statsType = (item.Type == ItemType.Armor) ? "방어력" : "공격력";
+                int statValue = (item.Type == ItemType.Armor) ? item.Defense : item.Attack;
+                Console.Write($"- ");
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.Write($"{i + 1} ");
+                Console.ResetColor();
+                Text.Equipped_E_Text(item.IsEquipped);
+                Console.WriteLine($"{item.Name.PadRight(10, ' ')}\t| {statsType} +{statValue}\t| {item.Desc}");
+            }
+
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write("0. ");
+            Console.ResetColor();
+            Console.WriteLine("나가기");
+            Console.WriteLine();
+            Console.Write("원하시는 행동을 입력해주세요.\n>> ");
+
+            while (true)
+            {
+                int selectInput = int.Parse(Console.ReadLine());
+
+                if (selectInput == 0)
+                {
+                    StoreDisplay();
+                }
+                else if (selectInput >= 1 && selectInput <= Items.ItemCount)
+                {
+                    int itemIndex = selectInput - 1;
+                    //아이템 구매
+                    break;
+                }
+                else
+                {
+                    Console.Write("잘못된 입력입니다.\n>> ");
+                }
+
+            }
+        }
+
+        private static void StoreSell()
+        {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("상점 - 아이템 판매");
+            Console.ResetColor();
+            Console.WriteLine("필요한 아이템을 얻을 수 있는 상점입니다.\n\n[보유 골드]");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write($"{Character._player.Gold}");
+            Console.ResetColor();
+            Console.WriteLine(" G\n");
+            Console.WriteLine("[아이템 목록]");
+
+            for (int i = 0; i < Items._items.Length; i++) //보유중인 아이템만 표시하도록 변경 필요
+            {
+                Items item = Items._items[i];
+
+                string statsType = (item.Type == ItemType.Armor) ? "방어력" : "공격력";
+                int statValue = (item.Type == ItemType.Armor) ? item.Defense : item.Attack;
+                Console.Write($"- ");
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.Write($"{i + 1} ");
+                Console.ResetColor();
+                Text.Equipped_E_Text(item.IsEquipped);
+                Console.WriteLine($"{item.Name.PadRight(10, ' ')}\t| {statsType} +{statValue}\t| {item.Desc}");
+            }
+
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write("0. ");
+            Console.ResetColor();
+            Console.WriteLine("나가기");
+            Console.WriteLine();
+            Console.Write("원하시는 행동을 입력해주세요.\n>> ");
+
+            while (true)
+            {
+                int selectInput = int.Parse(Console.ReadLine());
+
+                if (selectInput == 0)
+                {
+                    StoreDisplay();
+                }
+                else if (selectInput >= 1 && selectInput <= Items.ItemCount)
+                {
+                    int itemIndex = selectInput - 1;
+                    //아이템 판매
+                    break;
+                }
+                else
+                {
+                    Console.Write("잘못된 입력입니다.\n>> ");
+                }
+            }
+        }
     }
 }
+
+
