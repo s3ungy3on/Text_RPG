@@ -399,6 +399,8 @@ namespace Text_RPG
             Console.WriteLine();
             Text.TextNumberHlight("1");
             Console.WriteLine(". 장착 관리");
+            Text.TextNumberHlight("2");
+            Console.WriteLine(". 아이템 정렬");
             Text.TextNumberHlight("0");
             Console.Write(". 나가기\n\n원하시는 행동을 입력해주세요.\n>> ");
 
@@ -413,6 +415,10 @@ namespace Text_RPG
                 else if (selectInput == 1)
                 {
                     ItemEquipped();
+                }
+                else if (selectInput == 2)
+                {
+                    ItemArray();
                 }
                 else
                 {
@@ -475,6 +481,15 @@ namespace Text_RPG
                     Console.Write("잘못된 입력입니다.\n>> ");
                 }
             }
+        }
+
+        public static void ItemArray() // 배열 이름 길이로 정렬
+        {
+            Items._items = (from item in Items._items
+                            orderby item.Name.Length
+                            select item).ToArray();
+
+            InventoryDisplay();
         }
     }
 
