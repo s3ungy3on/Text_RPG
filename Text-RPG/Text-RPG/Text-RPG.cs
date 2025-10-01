@@ -38,6 +38,9 @@ namespace Text_RPG
                     case 4:
                         Adventure.TownPatrol();
                         break;
+                    case 5:
+                        Adventure.Training();
+                        break;
 
                 }
             }
@@ -130,8 +133,7 @@ namespace Text_RPG
             Console.ResetColor();
             Console.WriteLine("저장");
             Console.WriteLine();
-            Console.WriteLine("원하시는 행동을 입력해주세요.");
-            Console.Write(">> ");
+            Console.Write("원하시는 행동을 입력해주세요.\n>> ");
         }
 
         public static void Equipped_E_Text(bool isEquipped)
@@ -262,8 +264,7 @@ namespace Text_RPG
             Console.ResetColor();
             Console.WriteLine("나가기");
             Console.WriteLine();
-            Console.WriteLine("원하시는 행동을 입력해주세요.");
-            Console.Write(">> ");
+            Console.Write("원하시는 행동을 입력해주세요.\n>> ");
 
             while (true)
             {
@@ -275,8 +276,7 @@ namespace Text_RPG
                     }
                 }
 
-                Console.WriteLine("잘못된 입력입니다.");
-                Console.Write(">> ");
+                Console.Write("잘못된 입력입니다.\n>> ");
             }
         }
     }
@@ -364,8 +364,7 @@ namespace Text_RPG
             Console.ResetColor();
             Console.WriteLine("나가기");
             Console.WriteLine();
-            Console.WriteLine("원하시는 행동을 입력해주세요.");
-            Console.Write(">> ");
+            Console.Write("원하시는 행동을 입력해주세요.\n>> ");
 
             while (true)
             {
@@ -381,8 +380,7 @@ namespace Text_RPG
                 }
                 else
                 {
-                    Console.WriteLine("잘못된 입력입니다.");
-                    Console.Write(">> ");
+                    Console.Write("잘못된 입력입니다.\n>> ");
                 }
             }
         }
@@ -414,8 +412,7 @@ namespace Text_RPG
             Console.WriteLine();
             Console.WriteLine("0. 나가기");
             Console.WriteLine();
-            Console.WriteLine("원하시는 행동을 입력해주세요.");
-            Console.Write(">> ");
+            Console.Write("원하시는 행동을 입력해주세요.\n>> ");
 
             while (true)
             {
@@ -435,8 +432,7 @@ namespace Text_RPG
                 }
                 else
                 {
-                    Console.WriteLine("잘못된 입력입니다.");
-                    Console.Write(">> ");
+                    Console.Write("잘못된 입력입니다.\n>> ");
                 }
             }
         }
@@ -461,8 +457,7 @@ namespace Text_RPG
             Console.ResetColor();
             Console.WriteLine("돌아간다");
             Console.WriteLine();
-            Console.WriteLine("원하시는 행동을 입력해주세요.");
-            Console.Write(">> ");
+            Console.Write("원하시는 행동을 입력해주세요.\n>> ");
 
             int seletInput = int.Parse(Console.ReadLine());
 
@@ -478,8 +473,7 @@ namespace Text_RPG
                 }
                 else
                 {
-                    Console.WriteLine("잘못된 입력입니다.");
-                    Console.Write(">> ");
+                    Console.Write("잘못된 입력입니다.\n>> ");
                 }
             }
 
@@ -547,8 +541,7 @@ namespace Text_RPG
             Console.ResetColor();
             Console.WriteLine("돌아간다");
             Console.WriteLine();
-            Console.WriteLine("원하시는 행동을 입력해주세요.");
-            Console.Write(">> ");
+            Console.Write("원하시는 행동을 입력해주세요.\n>> ");
 
             int seletInput = int.Parse(Console.ReadLine());
 
@@ -564,8 +557,7 @@ namespace Text_RPG
                 }
                 else
                 {
-                    Console.WriteLine("잘못된 입력입니다.");
-                    Console.Write(">> ");
+                    Console.Write("잘못된 입력입니다.\n>> ");
                 }
             }
         }
@@ -577,7 +569,7 @@ namespace Text_RPG
 
             if (Character._player.Stamina >= 5)
             {
-                if(randnum <= 10)
+                if (randnum <= 10)
                 {
                     Console.WriteLine(".");
                     Thread.Sleep(500);
@@ -586,14 +578,13 @@ namespace Text_RPG
                     Console.WriteLine(".");
                     Thread.Sleep(500);
                     Console.WriteLine();
-                    Console.WriteLine("마을 아이들이 모여있다. 간식을 사줘볼까?");
-                    Console.WriteLine("500G를 소비하였습니다.");
+                    Console.WriteLine("마을 아이들이 모여있다. 간식을 사줘볼까?\n500G 를 소비하였습니다.");
                     Character._player.Gold -= 500;
                     Character._player.Stamina -= 5;
                     Thread.Sleep(1000);
                     Text_RPG.GameStartMenu();
                 }
-                else if(randnum <= 20)
+                else if (randnum <= 20)
                 {
                     Console.WriteLine(".");
                     Thread.Sleep(500);
@@ -602,14 +593,13 @@ namespace Text_RPG
                     Console.WriteLine(".");
                     Thread.Sleep(500);
                     Console.WriteLine();
-                    Console.WriteLine("촌장님을 만나서 심부름을 했다.");
-                    Console.WriteLine("2000G를 획득하였습니다.");
+                    Console.WriteLine("촌장님을 만나서 심부름을 했다.\n2000G 를 획득하였습니다.");
                     Character._player.Gold += 2000;
                     Character._player.Stamina -= 5;
                     Thread.Sleep(1000);
                     Text_RPG.GameStartMenu();
                 }
-                else if(randnum <= 40)
+                else if (randnum <= 40)
                 {
                     Console.WriteLine(".");
                     Thread.Sleep(500);
@@ -618,14 +608,13 @@ namespace Text_RPG
                     Console.WriteLine(".");
                     Thread.Sleep(500);
                     Console.WriteLine();
-                    Console.WriteLine("길 잃은 사람을 안내해주었다.");
-                    Console.WriteLine("1000G를 획득하였습니다.");
+                    Console.WriteLine("길 잃은 사람을 안내해주었다.\n1000G 를 획득하였습니다.");
                     Character._player.Gold += 1000;
                     Character._player.Stamina -= 5;
                     Thread.Sleep(1000);
                     Text_RPG.GameStartMenu();
                 }
-                else if(randnum <= 70)
+                else if (randnum <= 70)
                 {
                     Console.WriteLine(".");
                     Thread.Sleep(500);
@@ -634,10 +623,105 @@ namespace Text_RPG
                     Console.WriteLine(".");
                     Thread.Sleep(500);
                     Console.WriteLine();
-                    Console.WriteLine("마을 주민과 인사를 나눴다. 선물을 받았다.");
-                    Console.WriteLine("500G를 획득하였습니다.");
+                    Console.WriteLine("마을 주민과 인사를 나눴다. 선물을 받았다.\n500G 를 획득하였습니다.");
                     Character._player.Gold += 500;
                     Character._player.Stamina -= 5;
+                    Thread.Sleep(1000);
+                    Text_RPG.GameStartMenu();
+                }
+                else if (randnum <= 100)
+                {
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine();
+                    Console.WriteLine("아무 일도 일어나지 않았다.");
+                    Character._player.Stamina -= 5;
+                    Thread.Sleep(1000);
+                    Text_RPG.GameStartMenu();
+                }
+            }
+            else if (Character._player.Stamina < 5)
+            {
+                Console.WriteLine();
+                Console.WriteLine("스태미나가 부족합니다.");
+                Thread.Sleep(1000);
+                Text_RPG.GameStartMenu();
+            }
+        }
+
+        public static void Training()
+        {
+            Console.Clear();
+            Console.WriteLine("훈련을 진행하시겠습니까? \n스태미나 15가 소비됩니다.");
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write("1. ");
+            Console.ResetColor();
+            Console.WriteLine("진행한다");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write("0. ");
+            Console.ResetColor();
+            Console.WriteLine("돌아간다");
+            Console.WriteLine();
+            Console.Write("원하시는 행동을 입력해주세요.\n>> ");
+
+            int seletInput = int.Parse(Console.ReadLine());
+
+            while (true)
+            {
+                if (seletInput == 0)
+                {
+                    Text_RPG.GameStartMenu();
+                }
+                else if (seletInput == 1)
+                {
+                    TrainingPlay();
+                }
+                else
+                {
+                    Console.Write("잘못된 입력입니다.\n>> ");
+                }
+            }
+        }
+
+        private static void TrainingPlay()
+        {
+            Random rand = new Random();
+            int randnum = rand.Next(1, 101);
+
+            if (Character._player.Stamina >= 15)
+            {
+                if (randnum <= 15)
+                {
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine();
+                    Console.WriteLine("훈련이 잘 되었습니다!\n경험치 60을 획득하였습니다.");
+                    Character._player.Stamina -= 15;
+                    Character._player.Exp += 60;
+                    Thread.Sleep(1000);
+                    Text_RPG.GameStartMenu();
+                }
+                else if(randnum <= 75)
+                {
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine(".");
+                    Thread.Sleep(500);
+                    Console.WriteLine();
+                    Console.WriteLine("오늘하루 열심히 훈련했습니다.\n경험치 40을 획득하였습니다.");
+                    Character._player.Stamina -= 15;
+                    Character._player.Exp += 40;
                     Thread.Sleep(1000);
                     Text_RPG.GameStartMenu();
                 }
@@ -650,8 +734,9 @@ namespace Text_RPG
                     Console.WriteLine(".");
                     Thread.Sleep(500);
                     Console.WriteLine();
-                    Console.WriteLine("아무 일도 일어나지 않았다.");
-                    Character._player.Stamina -= 5;
+                    Console.WriteLine("하기 싫다... 훈련이...\n경험치 30을 획득하였습니다.");
+                    Character._player.Stamina -= 15;
+                    Character._player.Exp += 30;
                     Thread.Sleep(1000);
                     Text_RPG.GameStartMenu();
                 }
