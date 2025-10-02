@@ -21,37 +21,44 @@ namespace Text_RPG
             {
                 Text.MainScene();
 
-                int selectInput = int.Parse(Console.ReadLine());
-
-                switch (selectInput)
+                try
                 {
-                    case 1:
-                        Character._player.StatusDisplay();
-                        break;
-                    case 2:
-                        Inventory.InventoryDisplay();
-                        break;
-                    case 3:
-                        Adventure.RandomAdventure();
-                        break;
-                    case 4:
-                        Adventure.TownPatrol();
-                        break;
-                    case 5:
-                        Adventure.Training();
-                        break;
-                    case 6:
-                        Store.StoreDisplay();
-                        break;
-                    case 7:
-                        Dungeon.DungeonDisplay();
-                        break;
-                    case 8:
-                        Adventure.Relax();
-                        break;
-                    case 9:
-                        break;
+                    int selectInput = int.Parse(Console.ReadLine());
 
+                    switch (selectInput)
+                    {
+                        case 1:
+                            Character._player.StatusDisplay();
+                            return;
+                        case 2:
+                            Inventory.InventoryDisplay();
+                            return;
+                        case 3:
+                            Adventure.RandomAdventure();
+                            return;
+                        case 4:
+                            Adventure.TownPatrol();
+                            return;
+                        case 5:
+                            Adventure.Training();
+                            return;
+                        case 6:
+                            Store.StoreDisplay();
+                            return;
+                        case 7:
+                            Dungeon.DungeonDisplay();
+                            return;
+                        case 8:
+                            Adventure.Relax();
+                            return;
+                        case 9:
+                            return;
+                    }
+                }
+                catch (FormatException a)
+                {
+                    Console.WriteLine("숫자를 입력해 주세요.");
+                    Thread.Sleep(1000);
                 }
             }
         }
@@ -191,10 +198,10 @@ namespace Text_RPG
     {
         public static Character _player;
         public string Name { get; }
-        public int Level { get; }
+        public int Level { get; set; }
         public string Job { get; }
-        public int Attack { get; }
-        public int Defense { get; }
+        public float Attack { get; set; }
+        public int Defense { get; set; }
         public int Hp { get; set; }
         public int Gold { get; set; }
         public int Exp { get; set; }
@@ -204,7 +211,7 @@ namespace Text_RPG
         private int itemDefense = 0;
         private int itemHp = 0;
 
-        public Character(string name, int level, string job, int attack, int defese, int hp, int gold, int exp = 0, int stamina = 20)
+        public Character(string name, int level, string job, float attack, int defese, int hp, int gold, int exp = 0, int stamina = 20)
         {
             Name = name;
             Job = job;
@@ -217,7 +224,7 @@ namespace Text_RPG
             Stamina = stamina;
         }
 
-        private int CurrentAttack
+        private float CurrentAttack
         {
             get { return Attack + itemAttack; }
         }
@@ -285,9 +292,43 @@ namespace Text_RPG
             }
         }
 
+        private void LevelUp()
+        {
+            if(Level == 1 && Exp >= 50)
+            {
+                Level += 1;
+                Exp -= 50;
+                Attack += 0.5f;
+                Defense += 1;
+            }
+            else if(Level == 2 && Exp >= 80)
+            {
+                Level += 1;
+                Exp -= 80;
+                Attack += 0.5f;
+                Defense += 1;
+            }
+            else if(Level == 3 && Exp >= 150)
+            {
+                Level += 1;
+                Exp -= 150;
+                Attack += (int)0.5f;
+                Defense += 1;
+            }
+            else if(Level == 4 && Exp >= 500)
+            {
+                Level += 1;
+                Exp -= 500;
+                Attack += (int)0.5f;
+                Defense += 1;
+            }
+        }
+
         public void StatusDisplay()
         {
+            LevelUp();
             StatsUpdate();
+
             Console.Clear();
             Text.TextTitleHlight("상태 보기");
             Console.WriteLine("캐릭터의 정보가 표기됩니다.\n");
@@ -403,27 +444,30 @@ namespace Text_RPG
             Text.TextTitleHlight("인벤토리");
             Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.\n\n[아이템 목록]");
 
-            for (int i = 0; i < Items._items.Length; i++) //보유중인 아이템만 표시하도록 변경 필요
+            for (int i = 0; i < Items._items.Length; i++)
             {
                 Items item = Items._items[i];
                 string statsType;
                 int statsValue;
 
-                if (item.Type == ItemType.Armor)
+                if(item.IsPurchased == true)
                 {
-                    statsType = "방어력";
-                    statsValue = item.Defense;
-                }
-                else
-                {
-                    statsType = "공격력";
-                    statsValue = item.Attack;
-                }
+                    if (item.Type == ItemType.Armor)
+                    {
+                        statsType = "방어력";
+                        statsValue = item.Defense;
+                    }
+                    else
+                    {
+                        statsType = "공격력";
+                        statsValue = item.Attack;
+                    }
 
-                Console.Write($"- ");
-                Text.TextMagentaHlight($"{i + 1} ");
-                Text.Equipped_E_Text(item.IsEquipped);
-                Console.WriteLine($"{Text.PaddingKorean_Right(item.Name, 20)}\t| {Text.PaddingKorean_Right(statsType + " " + statsValue, 10)}\t| {Text.PaddingKorean_Right(item.Desc, 30)}");
+                    Console.Write($"- ");
+                    Text.TextMagentaHlight($"{i + 1} ");
+                    Text.Equipped_E_Text(item.IsEquipped);
+                    Console.WriteLine($"{Text.PaddingKorean_Right(item.Name, 20)}\t| {Text.PaddingKorean_Right(statsType + " " + statsValue, 10)}\t| {Text.PaddingKorean_Right(item.Desc, 30)}");
+                }
             }
 
             Console.WriteLine();
@@ -469,21 +513,24 @@ namespace Text_RPG
                 string statsType;
                 int statsValue;
 
-                if (item.Type == ItemType.Armor)
+                if (item.IsPurchased == true)
                 {
-                    statsType = "방어력";
-                    statsValue = item.Defense;
-                }
-                else
-                {
-                    statsType = "공격력";
-                    statsValue = item.Attack;
-                }
+                    if (item.Type == ItemType.Armor)
+                    {
+                        statsType = "방어력";
+                        statsValue = item.Defense;
+                    }
+                    else
+                    {
+                        statsType = "공격력";
+                        statsValue = item.Attack;
+                    }
 
-                Console.Write($"- ");
-                Text.TextMagentaHlight($"{i + 1} ");
-                Text.Equipped_E_Text(item.IsEquipped);
-                Console.WriteLine($"{Text.PaddingKorean_Right(item.Name, 20)}\t| {Text.PaddingKorean_Right(statsType + " " + statsValue, 10)}\t| {Text.PaddingKorean_Right(item.Desc, 30)}");
+                    Console.Write($"- ");
+                    Text.TextMagentaHlight($"{i + 1} ");
+                    Text.Equipped_E_Text(item.IsEquipped);
+                    Console.WriteLine($"{Text.PaddingKorean_Right(item.Name, 20)}\t| {Text.PaddingKorean_Right(statsType + " " + statsValue, 10)}\t| {Text.PaddingKorean_Right(item.Desc, 30)}");
+                }
             }
 
             Console.WriteLine();
@@ -1069,7 +1116,25 @@ namespace Text_RPG
             }
             else if (seletInput == 1)
             {
-                return;
+                if(Character._player.Defense >= 5)
+                {
+
+                }
+                else if (Character._player.Defense < 5)
+                {
+                    Random rand = new Random();
+                    int randNum = rand.Next(0, 101);
+                    int randHp = rand.Next(20, 36);
+
+                    if(randNum <= 40)
+                    {
+                        int newHp = Character._player.Hp - randHp / 2;
+                        newHp = Character._player.Hp;
+
+                        Text.ThredSleep();
+                        Console.WriteLine($"공략에 실패했습니다.\n체력이 {newHp} 만큼 감소하였습니다.");
+                    }
+                }
             }
             else if (seletInput == 2)
             {
