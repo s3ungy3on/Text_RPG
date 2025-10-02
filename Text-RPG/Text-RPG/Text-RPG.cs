@@ -105,23 +105,23 @@ namespace Text_RPG
             Console.WriteLine("스파르타 마을에 오신 여러분 환영합니다.");
             Console.WriteLine("이곳에서 던전으로 들어가기 전 활동을 할 수 있습니다.");
             Console.WriteLine();
-            TextNumberHlight("1");
+            TextMagentaHlight("1");
             Console.WriteLine(". 상태 보기");
-            TextNumberHlight("2");
+            TextMagentaHlight("2");
             Console.WriteLine(". 인벤토리");
-            TextNumberHlight("3");
+            TextMagentaHlight("3");
             Console.WriteLine(". 랜덤 모험");
-            TextNumberHlight("4");
+            TextMagentaHlight("4");
             Console.WriteLine(". 마을 순찰하기");
-            TextNumberHlight("5");
+            TextMagentaHlight("5");
             Console.WriteLine(". 훈련하기");
-            TextNumberHlight("6");
+            TextMagentaHlight("6");
             Console.WriteLine(". 상점");
-            TextNumberHlight("7");
+            TextMagentaHlight("7");
             Console.WriteLine(". 던전입장");
-            TextNumberHlight("8");
+            TextMagentaHlight("8");
             Console.WriteLine(". 휴식하기\n");
-            TextNumberHlight("0");
+            TextMagentaHlight("0");
             Console.WriteLine(". 저장\n");
             Console.Write("원하시는 행동을 입력해주세요.\n>> ");
         }
@@ -139,6 +139,15 @@ namespace Text_RPG
 
         }
 
+        public static string Purchased_Text(Items item)
+        {
+            if (item.IsPurchased == true)
+            {
+                return "\t| 구매 완료";
+            }
+            return $"\t| {item.Gold} G";
+        }
+
         public static void TextTitleHlight(string text)
         {
             Console.ForegroundColor = ConsoleColor.DarkYellow;
@@ -146,7 +155,7 @@ namespace Text_RPG
             Console.ResetColor();
         }
 
-        public static void TextNumberHlight(string text)
+        public static void TextMagentaHlight(string text)
         {
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.Write(text);
@@ -193,6 +202,7 @@ namespace Text_RPG
 
         private int itemAttack = 0;
         private int itemDefense = 0;
+        private int itemHp = 0;
 
         public Character(string name, int level, string job, int attack, int defese, int hp, int gold, int exp = 0, int stamina = 20)
         {
@@ -217,10 +227,16 @@ namespace Text_RPG
             get { return Defense + itemDefense; }
         }
 
+        public int CurrentHp
+        {
+            get { return Hp + itemHp; }
+        }
+
         private void StatsUpdate()
         {
             itemAttack = 0;
             itemDefense = 0;
+            itemHp = 0;
 
             if (Items._items == null)
             {
@@ -234,10 +250,20 @@ namespace Text_RPG
                     if (item.Type == ItemType.Wepon)
                     {
                         itemAttack += item.Attack;
+
+                        if(item.Hp > 0)
+                        {
+                            itemHp += item.Hp;
+                        }
                     }
                     else if (item.Type == ItemType.Armor)
                     {
                         itemDefense += item.Defense;
+
+                        if (item.Hp > 0)
+                        {
+                            itemHp += item.Hp;
+                        }
                     }
 
                 }
@@ -250,7 +276,7 @@ namespace Text_RPG
             if(value > 0)
             {
                 Console.Write(" (+");
-                Text.TextNumberHlight($"{value}");
+                Text.TextMagentaHlight($"{value}");
                 Console.Write(")\n");
             }
             else
@@ -269,7 +295,7 @@ namespace Text_RPG
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write("LV. ");
             Console.ResetColor();
-            Text.TextNumberHlight(Level.ToString());
+            Text.TextMagentaHlight(Level.ToString());
             //경험치
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write($"\tExp");
@@ -279,25 +305,26 @@ namespace Text_RPG
             Console.WriteLine($"{Name} ( {Job} )");
             //공격력 (+아이템 추가 공격력)
             Console.Write("공격력 : ");
-            Text.TextNumberHlight($"{CurrentAttack}");
+            Text.TextMagentaHlight($"{CurrentAttack}");
             StatsPlus(itemAttack);
             //방어력 (+아이템 추가 방어력)
             Console.Write("방어력 : ");
-            Text.TextNumberHlight($"{CurrentDefense}");
+            Text.TextMagentaHlight($"{CurrentDefense}");
             StatsPlus(itemDefense);
             //체력
             Console.Write("체 력 : ");
-            Text.TextNumberHlight($"{Hp}\n");
+            Text.TextMagentaHlight($"{CurrentHp}");
+            StatsPlus(itemHp);
             //스태미나
             Console.Write("스태미나 : ");
-            Text.TextNumberHlight($"{Stamina}\n");
+            Text.TextMagentaHlight($"{Stamina}\n");
             //골드
             Console.Write("Gold : ");
-            Text.TextNumberHlight($"{Gold} ");
+            Text.TextMagentaHlight($"{Gold} ");
             Console.WriteLine("G");
             Console.WriteLine();
 
-            Text.TextNumberHlight("0");
+            Text.TextMagentaHlight("0");
             Console.Write(". 나가기\n\n원하시는 행동을 입력해주세요.\n>> ");
 
             while (true)
@@ -329,6 +356,7 @@ namespace Text_RPG
         public ItemType Type { get; } // 0 = 무기 / 1 = 방어구
         public int Attack { get; } // 아이템 공격력
         public int Defense { get; } // 아이템 방어력
+        public int Hp { get; }
         public int Gold { get; set; } // 아이템 가격
         public bool IsEquipped { get; set; } // 아이템 장착 유무
         public bool IsPurchased { get; set; } // 아이템 구매 유무
@@ -337,13 +365,14 @@ namespace Text_RPG
 
 
 
-        public Items(string name, string desc, ItemType type, int attack, int defense, int gold, bool isEquipped = false, bool isPurchased = false)
+        public Items(string name, string desc, ItemType type, int attack, int defense, int hp, int gold, bool isEquipped = false, bool isPurchased = false)
         {
             Name = name;
             Desc = desc;
             Type = type;
             Attack = attack;
             Defense = defense;
+            Hp = hp;
             Gold = gold;
             IsEquipped = isEquipped;
             IsPurchased = isPurchased;
@@ -353,13 +382,13 @@ namespace Text_RPG
         {
             _items = new Items[6];
 
-            //이름, 설명, 아이템 타입, 공격력, 방어력, 골드
-            _items[0] = new Items("수련자 갑옷", "수련에 도움을 주는 갑옷입니다.", ItemType.Armor, 0, 5, 1000);
-            _items[1] = new Items("무쇠 갑옷", "무쇠로 만들어진 튼튼한 갑옷입니다.", ItemType.Armor, 0, 9, 1800);
-            _items[2] = new Items("스파르타의 갑옷", "스파르타의 전사들이 사용했다는 전설의 갑옷입니다.", ItemType.Armor, 0, 15, 3500);
-            _items[3] = new Items("낡은 검  ", "쉽게 볼 수 있는 낡은 검 입니다.", ItemType.Wepon, 2, 0, 600);
-            _items[4] = new Items("청동 도끼", "어디선가 사용됐던거 같은 도끼입니다.", ItemType.Wepon, 5, 0, 1500);
-            _items[5] = new Items("스파르타의 창", "스파르타의 전사들이 사용했다는 전설의 창입니다.", ItemType.Wepon, 7, 0, 2700);
+            //이름, 설명, 아이템 타입, 공격력, 방어력, 체력, 골드
+            _items[0] = new Items("수련자 갑옷", "수련에 도움을 주는 갑옷입니다.", ItemType.Armor, 0, 5, 0, 1000);
+            _items[1] = new Items("무쇠 갑옷", "무쇠로 만들어진 튼튼한 갑옷입니다.", ItemType.Armor, 0, 9, 0, 1800);
+            _items[2] = new Items("스파르타의 갑옷", "스파르타의 전사들이 사용했다는 전설의 갑옷입니다.", ItemType.Armor, 0, 15, 0, 3500);
+            _items[3] = new Items("낡은 검  ", "쉽게 볼 수 있는 낡은 검 입니다.", ItemType.Wepon, 2, 0, 0, 600);
+            _items[4] = new Items("청동 도끼", "어디선가 사용됐던거 같은 도끼입니다.", ItemType.Wepon, 5, 0, 0, 1500);
+            _items[5] = new Items("스파르타의 창", "스파르타의 전사들이 사용했다는 전설의 창입니다.", ItemType.Wepon, 7, 0, 0, 2700);
 
             ItemCount = _items.Length;
         }
@@ -374,7 +403,7 @@ namespace Text_RPG
             Text.TextTitleHlight("인벤토리");
             Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.\n\n[아이템 목록]");
 
-            for (int i = 0; i < Items._items.Length; i++)
+            for (int i = 0; i < Items._items.Length; i++) //보유중인 아이템만 표시하도록 변경 필요
             {
                 Items item = Items._items[i];
                 string statsType;
@@ -392,16 +421,17 @@ namespace Text_RPG
                 }
 
                 Console.Write($"- ");
+                Text.TextMagentaHlight($"{i + 1} ");
                 Text.Equipped_E_Text(item.IsEquipped);
-                Console.WriteLine($"{item.Name.PadRight(10, ' ')}\t| {statsType} +{statsValue}\t| {item.Desc}");
+                Console.WriteLine($"{Text.PaddingKorean_Right(item.Name, 20)}\t| {Text.PaddingKorean_Right(statsType + " " + statsValue, 10)}\t| {Text.PaddingKorean_Right(item.Desc, 30)}");
             }
 
             Console.WriteLine();
-            Text.TextNumberHlight("1");
+            Text.TextMagentaHlight("1");
             Console.WriteLine(". 장착 관리");
-            Text.TextNumberHlight("2");
+            Text.TextMagentaHlight("2");
             Console.WriteLine(". 아이템 정렬");
-            Text.TextNumberHlight("0");
+            Text.TextMagentaHlight("0");
             Console.Write(". 나가기\n\n원하시는 행동을 입력해주세요.\n>> ");
 
             while (true)
@@ -451,13 +481,13 @@ namespace Text_RPG
                 }
 
                 Console.Write($"- ");
-                Text.TextNumberHlight($"{i + 1} ");
+                Text.TextMagentaHlight($"{i + 1} ");
                 Text.Equipped_E_Text(item.IsEquipped);
-                Console.WriteLine($"{item.Name.PadRight(10, ' ')}\t| {statsType} +{statsValue}\t| {item.Desc}");
+                Console.WriteLine($"{Text.PaddingKorean_Right(item.Name, 20)}\t| {Text.PaddingKorean_Right(statsType + " " + statsValue, 10)}\t| {Text.PaddingKorean_Right(item.Desc, 30)}");
             }
 
             Console.WriteLine();
-            Text.TextNumberHlight("0");
+            Text.TextMagentaHlight("0");
             Console.Write(". 나가기\n\n원하시는 행동을 입력해주세요.\n>> ");
 
             while (true)
@@ -471,8 +501,25 @@ namespace Text_RPG
                 else if (selectInput >= 1 && selectInput <= Items.ItemCount)
                 {
                     int itemIndex = selectInput - 1;
+                    Items selectItem = Items._items[itemIndex];
 
-                    Items._items[itemIndex].IsEquipped = !Items._items[itemIndex].IsEquipped;
+                    if (!selectItem.IsEquipped)
+                    {
+                        foreach (var item in Items._items)
+                        {
+                            if (item.Type == selectItem.Type)
+                            {
+                                item.IsEquipped = false; //같은 타입 장착 해제
+                            }
+                        }
+
+                        selectItem.IsEquipped = true; //선택한 아이템 장착
+                    }
+                    else //장착 되어있는거 한 번 더 선택하면 장착 해제
+                    {
+                        selectItem.IsEquipped = false;
+                    }
+
                     ItemEquipped();
                     break;
                 }
@@ -500,7 +547,7 @@ namespace Text_RPG
             Console.Clear();
             Text.TextTitleHlight("상점");
             Console.WriteLine("필요한 아이템을 얻을 수 있는 상점입니다.\n\n[보유 골드]");
-            Text.TextNumberHlight($"{Character._player.Gold}");
+            Text.TextMagentaHlight($"{Character._player.Gold}");
             Console.WriteLine(" G\n\n[아이템 목록]");
 
             for (int i = 0; i < Items._items.Length; i++)
@@ -519,17 +566,19 @@ namespace Text_RPG
                     statsType = "공격력";
                     statsValue = item.Attack;
                 }
+
                 Console.Write($"- ");
+                Text.TextMagentaHlight($"{i + 1} ");
                 Text.Equipped_E_Text(item.IsEquipped);
-                Console.WriteLine($"{item.Name.PadRight(10, ' ')}\t| {statsType} +{statsValue}\t| {item.Desc}");
+                Console.WriteLine($"{Text.PaddingKorean_Right(item.Name, 20)}\t| {Text.PaddingKorean_Right(statsType + " " + statsValue, 10)}\t| {Text.PaddingKorean_Right(item.Desc, 30)}");
             }
 
             Console.WriteLine();
-            Text.TextNumberHlight("1");
+            Text.TextMagentaHlight("1");
             Console.WriteLine(". 아이템 구매");
-            Text.TextNumberHlight("2");
+            Text.TextMagentaHlight("2");
             Console.WriteLine(". 아이템 판매");
-            Text.TextNumberHlight("0");
+            Text.TextMagentaHlight("0");
             Console.Write(". 나가기\n\n원하시는 행동을 입력해주세요.\n>> ");
 
             while (true)
@@ -560,7 +609,7 @@ namespace Text_RPG
             Console.Clear();
             Text.TextTitleHlight("상점 - 아이템 구매");
             Console.WriteLine("필요한 아이템을 얻을 수 있는 상점입니다.\n\n[보유 골드]");
-            Text.TextNumberHlight($"{Character._player.Gold}");
+            Text.TextMagentaHlight($"{Character._player.Gold}");
             Console.WriteLine(" G\n\n[아이템 목록]");
 
             for (int i = 0; i < Items._items.Length; i++)
@@ -581,13 +630,15 @@ namespace Text_RPG
                 }
 
                 Console.Write($"- ");
-                Text.TextNumberHlight($"{i + 1} ");
+                Text.TextMagentaHlight($"{i + 1} ");
                 Text.Equipped_E_Text(item.IsEquipped);
-                Console.WriteLine($"{item.Name.PadRight(10, ' ')}\t| {statsType} +{statsValue}\t| {item.Desc}");
+                Console.WriteLine($"{Text.PaddingKorean_Right(item.Name, 20)}\t| {Text.PaddingKorean_Right(statsType + " " + statsValue, 10)}\t| {Text.PaddingKorean_Right(item.Desc, 50)}{Text.Purchased_Text(item)}");
+
+
             }
 
             Console.WriteLine();
-            Text.TextNumberHlight("0");
+            Text.TextMagentaHlight("0");
             Console.Write(". 나가기\n\n원하시는 행동을 입력해주세요.\n>> ");
 
             while (true)
@@ -601,7 +652,20 @@ namespace Text_RPG
                 else if (selectInput >= 1 && selectInput <= Items.ItemCount)
                 {
                     int itemIndex = selectInput - 1;
-                    //아이템 구매
+                    Items selectItem = Items._items[itemIndex];
+
+                    if (!selectItem.IsPurchased && Character._player.Gold >= selectItem.Gold)
+                    {
+                        selectItem.IsPurchased = true; //선택한 아이템 구매
+                        Character._player.Gold -= selectItem.Gold;
+                    }
+                    else if(Character._player.Gold < selectItem.Gold)
+                    {
+                        Console.WriteLine("소지금이 부족합니다.");
+                        Thread.Sleep(1000);
+                    }
+
+                    StoreBuy();
                     break;
                 }
                 else
@@ -617,10 +681,10 @@ namespace Text_RPG
             Console.Clear();
             Text.TextTitleHlight("상점 - 아이템 판매");
             Console.WriteLine("필요한 아이템을 얻을 수 있는 상점입니다.\n\n[보유 골드]");
-            Text.TextNumberHlight($"{Character._player.Gold}");
+            Text.TextMagentaHlight($"{Character._player.Gold}");
             Console.WriteLine(" G\n\n[아이템 목록]");
 
-            for (int i = 0; i < Items._items.Length; i++) //보유중인 아이템만 표시하도록 변경 필요
+            for (int i = 0; i < Items._items.Length; i++)
             {
                 Items item = Items._items[i];
                 string statsType;
@@ -638,13 +702,15 @@ namespace Text_RPG
                 }
 
                 Console.Write($"- ");
-                Text.TextNumberHlight($"{i + 1} ");
+                Text.TextMagentaHlight($"{i + 1} ");
                 Text.Equipped_E_Text(item.IsEquipped);
-                Console.WriteLine($"{item.Name.PadRight(10, ' ')}\t| {statsType} +{statsValue}\t| {item.Desc}");
+                Console.WriteLine($"{Text.PaddingKorean_Right(item.Name, 20)}\t| {Text.PaddingKorean_Right(statsType + " " + statsValue, 10)}\t| {Text.PaddingKorean_Right(item.Desc, 50)}{Text.Purchased_Text(item)}");
+
+
             }
 
             Console.WriteLine();
-            Text.TextNumberHlight("0");
+            Text.TextMagentaHlight("0");
             Console.Write(". 나가기\n\n원하시는 행동을 입력해주세요.\n>> ");
 
             while (true)
@@ -658,7 +724,15 @@ namespace Text_RPG
                 else if (selectInput >= 1 && selectInput <= Items.ItemCount)
                 {
                     int itemIndex = selectInput - 1;
-                    //아이템 판매
+                    Items selectItem = Items._items[itemIndex];
+
+                    if (selectItem.IsPurchased)
+                    {
+                        selectItem.IsPurchased = false; //선택한 아이템 판매
+                        Character._player.Gold += selectItem.Gold;
+                    }
+
+                    StoreSell();
                     break;
                 }
                 else
@@ -671,13 +745,14 @@ namespace Text_RPG
 
     public class Adventure
     {
+        
         public static void RandomAdventure() //랜덤 모험 화면
         {
             Console.Clear();
             Console.WriteLine("랜덤 모험을 진행하시겠습니까?\n스태미나 10이 소비됩니다.\n");
-            Text.TextNumberHlight("1");
+            Text.TextMagentaHlight("1");
             Console.WriteLine(". 진행한다");
-            Text.TextNumberHlight("0");
+            Text.TextMagentaHlight("0");
             Console.WriteLine(". 돌아간다\n");
             Console.Write("원하시는 행동을 입력해주세요.\n>> ");
 
@@ -741,9 +816,9 @@ namespace Text_RPG
         {
             Console.Clear();
             Console.WriteLine("마을 순찰을 진행하시겠습니까?\n스태미나 5가 소비됩니다.\n");
-            Text.TextNumberHlight("1");
+            Text.TextMagentaHlight("1");
             Console.WriteLine(". 진행한다");
-            Text.TextNumberHlight("0");
+            Text.TextMagentaHlight("0");
             Console.WriteLine(". 돌아간다\n");
             Console.Write("원하시는 행동을 입력해주세요.\n>> ");
 
@@ -832,9 +907,9 @@ namespace Text_RPG
             Console.Clear();
             Console.WriteLine("훈련을 진행하시겠습니까? \n스태미나 15가 소비됩니다.");
             Console.WriteLine();
-            Text.TextNumberHlight("1");
+            Text.TextMagentaHlight("1");
             Console.WriteLine(". 진행한다");
-            Text.TextNumberHlight("0");
+            Text.TextMagentaHlight("0");
             Console.WriteLine(". 돌아간다\n");
             Console.Write("원하시는 행동을 입력해주세요.\n>> ");
 
@@ -905,13 +980,13 @@ namespace Text_RPG
         {
             Console.Clear();
             Text.TextTitleHlight("휴식하기");
-            Text.TextNumberHlight("500");
+            Text.TextMagentaHlight("500");
             Console.Write($" G를 내면 체력을 회복할 수 있습니다. (보유 골드 : ");
-            Text.TextNumberHlight($"{Character._player.Gold}");
+            Text.TextMagentaHlight($"{Character._player.Gold}");
             Console.WriteLine(" G)\n");
-            Text.TextNumberHlight("1");
+            Text.TextMagentaHlight("1");
             Console.WriteLine(". 휴식하기");
-            Text.TextNumberHlight("0");
+            Text.TextMagentaHlight("0");
             Console.WriteLine(". 나가기\n");
             Console.Write("원하시는 행동을 입력해주세요.\n>> ");
 
@@ -940,8 +1015,12 @@ namespace Text_RPG
             {
                 Text.ThredSleep();
                 Console.WriteLine("휴식을 완료했습니다.\n체력과 스태미나가 최대치로 회복되었습니다.");
-                Character._player.Stamina = 20; //고치기
-                Character._player.Hp = 100; //고치기
+                Character._player.Stamina = 20;
+                Character._player.Hp = 100;
+                if(Character._player.Hp > Character._player.CurrentHp) //최대 체력 제한
+                {
+                    Character._player.Hp = Character._player.CurrentHp;
+                }
                 Character._player.Gold -= 500;
                 Thread.Sleep(1000);
                 Text_RPG.GameStartMenu();
@@ -964,22 +1043,22 @@ namespace Text_RPG
             Text.TextTitleHlight("던전 입장");
             Console.WriteLine("이곳에서 던전으로 들어가기 전 활동을 할 수 있습니다.\n");
             // 1. 쉬운 던전
-            Text.TextNumberHlight("1");
+            Text.TextMagentaHlight("1");
             Console.Write(". 쉬운 던전 \t| 방어력");
-            Text.TextNumberHlight(" 5 ");
+            Text.TextMagentaHlight(" 5 ");
             Console.WriteLine("이상 권장");
             // 2. 일반 던전
-            Text.TextNumberHlight("2");
+            Text.TextMagentaHlight("2");
             Console.Write(". 일반 던전 \t| 방어력");
-            Text.TextNumberHlight(" 11 ");
+            Text.TextMagentaHlight(" 11 ");
             Console.WriteLine("이상 권장");
             // 3. 어려운 던전
-            Text.TextNumberHlight("3");
+            Text.TextMagentaHlight("3");
             Console.Write(". 어려운 던전 \t| 방어력");
-            Text.TextNumberHlight(" 17 ");
+            Text.TextMagentaHlight(" 17 ");
             Console.WriteLine("이상 권장");
             // 나가기
-            Text.TextNumberHlight("0");
+            Text.TextMagentaHlight("0");
             Console.Write(". 나가기\n\n원하시는 행동을 입력해주세요.\n>> ");
 
             int seletInput = int.Parse(Console.ReadLine());
