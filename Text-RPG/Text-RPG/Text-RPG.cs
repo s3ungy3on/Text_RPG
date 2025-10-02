@@ -1064,10 +1064,12 @@ namespace Text_RPG
                 Console.WriteLine("휴식을 완료했습니다.\n체력과 스태미나가 최대치로 회복되었습니다.");
                 Character._player.Stamina = 20;
                 Character._player.Hp = 100;
+
                 if(Character._player.Hp > Character._player.CurrentHp) //최대 체력 제한
                 {
                     Character._player.Hp = Character._player.CurrentHp;
                 }
+
                 Character._player.Gold -= 500;
                 Thread.Sleep(1000);
                 Text_RPG.GameStartMenu();
@@ -1084,6 +1086,34 @@ namespace Text_RPG
 
     public class Dungeon
     {
+        private string Level { get; }
+        private int Defense {  get; }
+        private int RewardGold { get; }
+        private int RewardExp { get; }
+        public static Dungeon[] rewards;
+
+        public Dungeon(string level, int defense, int rewardGold, int rewardExp)
+        {
+            Level = level;
+            Defense = defense;
+            RewardGold = rewardGold;
+            RewardExp = rewardExp;
+        }
+
+
+
+        static Dungeon()
+        {
+            rewards = new Dungeon[3];
+
+            //던전 난이도, 던전 권장 방어력, 골드 보상, 경험치 보상
+            rewards[0] = new Dungeon("쉬운 던전", 5, 1000, 50);
+            rewards[1] = new Dungeon("일반 던전", 11, 1700, 100);
+            rewards[2] = new Dungeon("어려운 던전", 17, 2500, 200);
+
+
+        }
+
         public static void DungeonDisplay() //던전 입장 화면
         {
             Console.Clear();
@@ -1092,17 +1122,17 @@ namespace Text_RPG
             // 1. 쉬운 던전
             Text.TextMagentaHlight("1");
             Console.Write(". 쉬운 던전 \t| 방어력");
-            Text.TextMagentaHlight(" 5 ");
+            Text.TextMagentaHlight($" {rewards[0].Defense} ");
             Console.WriteLine("이상 권장");
             // 2. 일반 던전
             Text.TextMagentaHlight("2");
             Console.Write(". 일반 던전 \t| 방어력");
-            Text.TextMagentaHlight(" 11 ");
+            Text.TextMagentaHlight($" {rewards[1].Defense} ");
             Console.WriteLine("이상 권장");
             // 3. 어려운 던전
             Text.TextMagentaHlight("3");
             Console.Write(". 어려운 던전 \t| 방어력");
-            Text.TextMagentaHlight(" 17 ");
+            Text.TextMagentaHlight($" {rewards[2].Defense} ");
             Console.WriteLine("이상 권장");
             // 나가기
             Text.TextMagentaHlight("0");
@@ -1114,39 +1144,90 @@ namespace Text_RPG
             {
                 Text_RPG.GameStartMenu();
             }
-            else if (seletInput == 1)
+            else if (seletInput >= 1 && seletInput <= 3)
             {
-                if(Character._player.Defense >= 5)
-                {
+                int dungeonIndex = seletInput - 1;
+                Dungeon dungeon = rewards[dungeonIndex];
 
+                if(Character._player.Defense >= dungeon.Defense)
+                {
+                    DungeonClear(seletInput);
                 }
-                else if (Character._player.Defense < 5)
+                else
                 {
                     Random rand = new Random();
-                    int randNum = rand.Next(0, 101);
+                    int randNum = rand.Next(1, 101);
                     int randHp = rand.Next(20, 36);
 
                     if(randNum <= 40)
                     {
-                        int newHp = Character._player.Hp - randHp / 2;
-                        newHp = Character._player.Hp;
-
+                        Character._player.Hp -= randHp / 2;
                         Text.ThredSleep();
-                        Console.WriteLine($"공략에 실패했습니다.\n체력이 {newHp} 만큼 감소하였습니다.");
+                        Console.WriteLine($"공략에 실패했습니다.\n체력이 {randHp / 2} 만큼 감소하였습니다.");
+                        Thread.Sleep(1000);
+                        Text_RPG.GameStartMenu();
+                    }
+                    else
+                    {
+                        DungeonClear(seletInput);
                     }
                 }
             }
-            else if (seletInput == 2)
-            {
-                return;
-            }
-            else if (seletInput == 3)
-            {
-                return;
-            }
             else
             {
-                Console.Write("잘못된 입력입니다.\n>> ");
+                Console.WriteLine("잘못된 입력입니다.");
+            }
+        }
+
+        private static void DungeonClear(int seletInput)
+        {
+            Dungeon rewards = Dungeon.rewards[seletInput - 1];
+
+            Random rand = new Random();
+            int randHp = rand.Next(20 - (Character._player.Defense - rewards.Defense), 36 - (Character._player.Defense - rewards.Defense));
+            int randRewardPercent = rand.Next((int)Character._player.Attack, (int)Character._player.Attack * 2);
+
+            int newHp = Character._player.Hp - randHp;
+            int rewardGold = (int)(rewards.RewardGold * (1 + randRewardPercent / 100.0)); // 115% = 기본 100% + 보너스 15% 즉 1000 * 1.15 = 1150
+            int rewardExp = (int)(rewards.RewardExp * (1 + randRewardPercent / 100.0));
+
+            Text.ThredSleep();
+            Console.Clear();
+            Text.TextTitleHlight("던전 클리어");
+            Console.Write($"축하합니다!!\n{rewards.Level}을 클리어 하였습니다.\n\n[탐험 결과]\n체력 ");
+            Text.TextMagentaHlight($"{Character._player.Hp}");
+            Console.Write(" -> ");
+            Text.TextMagentaHlight($"{Character._player.Hp - randHp}\n");
+            Console.Write("Gold ");
+            Text.TextMagentaHlight($"{Character._player.Gold}");
+            Console.Write(" G -> ");
+            Text.TextMagentaHlight($"{Character._player.Gold + rewardGold}");
+            Console.Write(" G\n\n");
+
+            Character._player.Gold += rewardGold;
+            Character._player.Exp += rewardExp;
+            Character._player.Hp = newHp;
+
+            if (Character._player.Hp <= 0) //최소 체력 제한
+            {
+                Character._player.Hp = 0;
+            }
+
+            Text.TextMagentaHlight("0");
+            Console.Write(". 나가기\n\n원하시는 행동을 입력해주세요.\n>> ");
+
+            int seletInput2 = int.Parse(Console.ReadLine());
+
+            while (true)
+            {
+                if (seletInput2 == 0)
+                {
+                    Text_RPG.GameStartMenu();
+                }
+                else
+                {
+                    Console.Write("잘못된 입력입니다.\n>> ");
+                }
             }
         }
     }  
